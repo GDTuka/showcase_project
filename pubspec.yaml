@@ -1,0 +1,41 @@
+name: showcase_project
+description: "A new Flutter project."
+
+publish_to: 'none' 
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.10.0-290.4.beta
+
+
+dependencies:
+  flutter:
+    sdk: flutter
+  uuid: ^4.4.2
+  l: ^4.0.2
+  mask_text_input_formatter: ^2.9.0
+  octopus: ^0.0.9
+  infinite_scroll_pagination: ^4.0.0
+  auto_size_text: ^3.0.0
+  collection: ^1.18.0
+  cupertino_icons: ^1.0.8
+  device_info_plus: ^10.1.1
+  padi: ^1.0.2
+  overlay_notifications:
+    git:
+      url: https://github.com/GDTuka/overlay_notification.git
+  evvm:
+    git:
+      url: https://github.com/GDTuka/evvm.git
+      ref: master
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  build_runner: ^2.4.9
+  flutter_lints: ^6.0.0
+
+
+flutter:
+  uses-material-design: true
