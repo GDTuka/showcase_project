@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
+/// Класс, содержащий цветовую палитру приложения
+/// Предоставляет набор базовых и семантических цветов для использования в UI
 class AppColors {
+  /// Конструктор для создания цветовой палитры
+  /// Требует указания всех основных цветов, используемых в приложении
   AppColors({
     required this.primary,
     required this.secondary,
@@ -27,30 +31,76 @@ class AppColors {
     required this.scrim,
   });
 
+  /// Основной цвет (например, для главных кнопок и акцентов)
   final Color primary;
+
+  /// Вторичный цвет
   final Color secondary;
+
+  /// Цвет текста/иконок на фоне primary
   final Color onPrimary;
+
+  /// Цвет текста/иконок на фоне secondary
   final Color onSecondary;
+
+  /// Цвет состояния фокуса
   final Color focus;
+
+  /// Цвет элементов на фоне focus
   final Color onFocus;
+
+  /// Цвет состояния нажатия
   final Color pressed;
+
+  /// Основной цвет фона экранов
   final Color background;
+
+  /// Цвет текста/иконок на фоне background
   final Color onBackground;
+
+  /// Цвет поверхностей (карточек, диалогов)
   final Color surface;
+
+  /// Цвет текста/иконок на фоне surface
   final Color onSurface;
+
+  /// Цвет для ошибок и критических действий
   final Color error;
+
+  /// Цвет элементов на фоне error
   final Color onError;
+
+  /// Цвет для успешных действий
   final Color success;
+
+  /// Цвет элементов на фоне success
   final Color onSuccess;
+
+  /// Цвет для предупреждений
   final Color warning;
+
+  /// Цвет элементов на фоне warning
   final Color onWarning;
+
+  /// Цвет для информационных сообщений
   final Color info;
+
+  /// Цвет элементов на фоне info
   final Color onInfo;
+
+  /// Цвет рамок и границ
   final Color border;
+
+  /// Цвет разделителей
   final Color divider;
+
+  /// Цвет теней
   final Color shadow;
+
+  /// Цвет затемнения (под диалогами и модалками)
   final Color scrim;
 
+  /// Фабричный метод для создания темной цветовой палитры
   factory AppColors.dark() {
     return AppColors(
       primary: const Color(0xFF3A6B97),
@@ -79,6 +129,7 @@ class AppColors {
     );
   }
 
+  /// Фабричный метод для создания светлой цветовой палитры
   factory AppColors.light() {
     return AppColors(
       primary: const Color(0xFF6C63FF),
@@ -107,14 +158,32 @@ class AppColors {
     );
   }
 
-  // Convenience getters for common colors
+  // Удобные геттеры для часто используемых семантических цветов
+
+  /// Цвет фона для карточек
   Color get cardBackground => surface;
+
+  /// Цвет рамки для карточек
   Color get cardBorder => border;
+
+  /// Основной цвет текста
   Color get textPrimary => onBackground;
+
+  /// Вторичный (приглушенный) цвет текста
   Color get textSecondary => onSurface.withValues(alpha: 0.7);
+
+  /// Третичный (сильно приглушенный) цвет текста
   Color get textTertiary => onSurface.withValues(alpha: 0.5);
+
+  /// Основной цвет иконок
   Color get iconPrimary => onSurface;
+
+  /// Вторичный цвет иконок
   Color get iconSecondary => onSurface.withValues(alpha: 0.6);
+
+  /// Цвет задизейбленной кнопки
   Color get buttonDisabled => onSurface.withValues(alpha: 0.3);
+
+  /// Цвет оверлея (затемнения)
   Color get overlay => scrim;
 }
