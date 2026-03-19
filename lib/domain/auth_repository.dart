@@ -28,14 +28,14 @@ class AuthRepository implements IAuthRepository {
   /// Инициализирует репозиторий с зависимостью от [AuthApi]
   /// [AuthApi authApi] - API клиент для выполнения запросов
   AuthRepository({
-    required AuthApi authApi,
+    required IAuthApi authApi,
     required JWTStorage jwtStorage,
     required RefreshTokenStorage refreshTokenStorage,
   }) : _authApi = authApi,
        _jwtStorage = jwtStorage,
        _refreshTokenStorage = refreshTokenStorage;
 
-  final AuthApi _authApi;
+  final IAuthApi _authApi;
   final JWTStorage _jwtStorage;
   final RefreshTokenStorage _refreshTokenStorage;
 

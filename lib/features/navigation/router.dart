@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:octopus/octopus.dart';
+import 'package:showcase_project/di/octopus_helper/octopus_scope_helper.dart';
 import 'package:showcase_project/features/screens/auth/auth_view.dart';
 
 /// Перечисление всех доступных маршрутов в приложении
@@ -38,7 +39,7 @@ enum Routes with OctopusRoute {
   @override
   Widget builder(BuildContext context, OctopusState state, OctopusNode node) => switch (this) {
     Routes.addHabbit => const Text('Add Habbit'),
-    Routes.auth => AuthView(),
+    Routes.auth => AuthScopeWrapper(child: AuthView()),
     Routes.home => const Text('Home'),
     Routes.profile => const Text('Profile'),
     Routes.settings => const Text('Settings'),

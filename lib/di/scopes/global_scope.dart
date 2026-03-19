@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:octopus/octopus.dart';
 import 'package:padi/padi.dart';
-import 'package:showcase_project/data/api/api/auth_api.dart';
 import 'package:showcase_project/data/api/interceptors/logger_interceptor.dart';
 import 'package:showcase_project/data/storage/jwt_storage.dart';
 import 'package:showcase_project/data/storage/refersh_token_storage.dart';
@@ -29,10 +28,10 @@ class GlobalScope extends Padi {
   late final FlutterSecureStorage secureStorage;
 
   /// Хранилище JWT токена
-  late final JWTStorage _jwtStorage;
+  late final JWTStorage jwtStorage;
 
   /// Хранилище refresh токена
-  late final RefreshTokenStorage _refreshTokenStorage;
+  late final RefreshTokenStorage refreshTokenStorage;
 
   /// Асинхронная инициализация глобальных зависимостей
   /// Вызывается при запуске приложения до показа основного экрана
@@ -41,14 +40,14 @@ class GlobalScope extends Padi {
   Future<void> initAsync(BuildContext context) async {
     secureStorage = FlutterSecureStorage();
 
-    _jwtStorage = JWTStorage(storage: secureStorage);
+    jwtStorage = JWTStorage(storage: secureStorage);
 
-    _refreshTokenStorage = RefreshTokenStorage(storage: secureStorage);
+    refreshTokenStorage = RefreshTokenStorage(storage: secureStorage);
 
     // Инициализация роутера со списком доступных маршрутов
     router = Octopus(
       routes: Routes.values,
-      guards: [AuthGuard(jwtStorage: _jwtStorage)],
+      guards: [AuthGuard(jwtStorage: jwtStorage)],
     );
 
     // Инициализация сетевого клиента
@@ -60,16 +59,6 @@ class GlobalScope extends Padi {
       ),
     );
     dio.interceptors.add(LoggerInterceptor());
-
-    // Инициализация API
-    final authApi = AuthApi(dio: dio);
-
-    // Инициализация репозиториев
-    authRepository = AuthRepository(
-      authApi: authApi,
-      jwtStorage: _jwtStorage,
-      refreshTokenStorage: _refreshTokenStorage,
-    );
   }
 }
 

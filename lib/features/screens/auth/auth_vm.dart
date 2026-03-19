@@ -1,8 +1,8 @@
 import 'package:evvm/evvm.dart';
 import 'package:evvm/evvm_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:showcase_project/di/scopes/auth_scope.dart';
 import 'package:showcase_project/domain/auth_repository.dart';
-import 'package:showcase_project/di/scopes/global_scope.dart';
 import 'package:showcase_project/features/screens/auth/auth_view.dart';
 import 'package:showcase_project/features/utils/app_text_field/text_field_controller.dart';
 
@@ -29,7 +29,7 @@ abstract interface class IAuthVm implements IViewModel {
 /// Фабрика для создания экземпляра [AuthVm]
 /// Вызывается при создании виджета [AuthView]
 AuthVm authVMF(BuildContext context) {
-  return AuthVm(authRepository: context.global.authRepository);
+  return AuthVm(authRepository: context.auth.authRepository);
 }
 
 /// Реализация ViewModel для экрана авторизации
