@@ -1,7 +1,9 @@
 import 'package:evvm/evvm.dart';
 import 'package:evvm/evvm_helper.dart';
 import 'package:flutter/material.dart';
-import 'package:showcase_project/features/screens/auth/auth_widget.dart';
+import 'package:showcase_project/domain/auth_repository.dart';
+import 'package:showcase_project/di/scopes/global_scope.dart';
+import 'package:showcase_project/features/screens/auth/auth_view.dart';
 import 'package:showcase_project/features/utils/app_text_field/text_field_controller.dart';
 
 /// Интерфейс ViewModel для экрана авторизации и регистрации
@@ -25,19 +27,33 @@ abstract interface class IAuthVm implements IViewModel {
 }
 
 /// Фабрика для создания экземпляра [AuthVm]
-/// Вызывается при создании виджета [AuthWidget]
+/// Вызывается при создании виджета [AuthView]
 AuthVm authVMF(BuildContext context) {
-  return AuthVm();
+  return AuthVm(authRepository: context.global.authRepository);
 }
 
 /// Реализация ViewModel для экрана авторизации
 /// Управляет бизнес-логикой авторизации по номеру телефона
-class AuthVm extends ViewModel<AuthWidget> implements IAuthVm {
+class AuthVm extends ViewModel<AuthView> implements IAuthVm {
+  /// Инициализирует ViewModel и принимает зависимости
+  /// [IAuthRepository authRepository] - репозиторий для работы с авторизацией
+  AuthVm({required IAuthRepository authRepository})
+    : _authRepository = authRepository;
+
+  /// Репозиторий авторизации
+  final IAuthRepository _authRepository;
+
   /// Инициализация контроллера телефона с маской
-  late final _phoneController = AppTextController(label: 'Номер телефона', mask: '+7(###)###-##-##');
+  late final _phoneController = AppTextController(
+    label: 'Номер телефона',
+    mask: '+7(###)###-##-##',
+  );
 
   /// Инициализация контроллера кода с маской
-  late final _codeController = AppTextController(label: 'Код из СМС', mask: '######');
+  late final _codeController = AppTextController(
+    label: 'Код из СМС',
+    mask: '######',
+  );
 
   /// Внутреннее состояние загрузки
   final _isLoadingEntity = EntityStateNotifier<bool>.value(false);
@@ -79,21 +95,60 @@ class AuthVm extends ViewModel<AuthWidget> implements IAuthVm {
     // Установка состояния загрузки
     _isLoadingEntity.content(true);
 
-    // Имитация сетевого запроса
-    await Future.delayed(const Duration(seconds: 2));
+    try {
+      if (!(_isCodeSentEntity.value.data ?? false)) {
+        // Получаем сырой номер телефона без маски
+        final phone = _phoneController.unmasked;
 
-    if (!(_isCodeSentEntity.value.data ?? false)) {
-      // Если код еще не был отправлен:
-      // 1. Помечаем, что код отправлен (переключает UI на ввод кода)
-      // 2. Снимаем состояние загрузки
-      _isCodeSentEntity.content(true);
+        // 1. Проверяем, существует ли уже такой номер
+        await _authRepository.checkPhoneUnique(phone);
+
+        // В реальном приложении здесь была бы логика отправки СМС,
+        // но так как API бэкенда принимает пароль при логине/регистрации,
+        // будем использовать СМС код как "пароль" для демонстрации.
+
+        // Помечаем, что код отправлен (переключает UI на ввод кода)
+        _isCodeSentEntity.content(true);
+      } else {
+        // Если код уже введен:
+        final phone = _phoneController.unmasked;
+        final password = _codeController.unmasked; // Используем код как пароль
+
+        // Проверяем уникальность еще раз, чтобы решить: логин или регистрация
+        final isUnique = await _authRepository.checkPhoneUnique(phone);
+
+        if (isUnique) {
+          // Если номер уникален - регистрируем
+          // Генерируем случайный логин, так как в UI его нет
+          final login = 'user_$phone';
+          await _authRepository.register(
+            login: login,
+            phone: phone,
+            password: password,
+          );
+
+          // После регистрации сразу логинимся
+          await _authRepository.login(login: login, password: password);
+        } else {
+          // Если номер НЕ уникален - значит пользователь уже существует, логинимся
+          // Для логина нужен login, но в UI у нас только телефон.
+          // Предполагаем, что логин совпадает с 'user_$phone'
+          final login = 'user_$phone';
+          await _authRepository.login(login: login, password: password);
+        }
+
+        // TODO: Навигация после успешной авторизации на главный экран
+      }
+    } catch (e) {
+      // В случае ошибки показываем ее в поле
+      if (!(_isCodeSentEntity.value.data ?? false)) {
+        _phoneController.updateFieldState(FieldStateType.error, e.toString());
+      } else {
+        _codeController.updateFieldState(FieldStateType.error, e.toString());
+      }
+    } finally {
+      // Снимаем состояние загрузки в любом случае
       _isLoadingEntity.content(false);
-    } else {
-      // Если код уже отправлен и мы его проверяем:
-      // 1. Завершаем загрузку
-      // 2. В будущем здесь будет навигация на главный экран
-      _isLoadingEntity.content(false);
-      // TODO: Навигация после успешной авторизации
     }
   }
 }

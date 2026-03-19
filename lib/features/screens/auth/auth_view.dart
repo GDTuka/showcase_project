@@ -5,8 +5,8 @@ import 'package:showcase_project/features/screens/auth/auth_vm.dart';
 import 'package:showcase_project/features/screens/auth/widgets/auth_screen_widget.dart';
 import 'package:showcase_project/features/screens/auth/widgets/register_screen_widget.dart';
 
-class AuthWidget extends WidgetView<IAuthVm> {
-  const AuthWidget({super.key}) : super(authVMF);
+class AuthView extends WidgetView<IAuthVm> {
+  const AuthView({super.key}) : super(authVMF);
 
   @override
   Widget build(IAuthVm vm, BuildContext context) {
@@ -19,9 +19,18 @@ class AuthWidget extends WidgetView<IAuthVm> {
             listenableEntityState: vm.isCodeSentListenable,
             builder: (context, isCodeSent) {
               if (isCodeSent ?? false) {
-                return RegisterScreenWidget(vm: vm);
+                return RegisterScreenWidget(
+                  phoneController: vm.phoneController,
+                  codeController: vm.codeController,
+                  isLoadingListenable: vm.isLoadingListenable,
+                  onSubmit: vm.submit,
+                );
               }
-              return AuthScreenWidget(vm: vm);
+              return AuthScreenWidget(
+                phoneController: vm.phoneController,
+                isLoadingListenable: vm.isLoadingListenable,
+                onSubmit: vm.submit,
+              );
             },
           ),
         ),
