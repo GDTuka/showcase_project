@@ -1,0 +1,38 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Flutter - prod",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/features/launchers/prod_launcher.dart",
+            "args": [
+                "--flavor",
+                "prod",
+                "--dart-define=FLAVOR=prod"
+            ]
+        },
+        {
+            "name": "Flutter - stage",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/features/launchers/stage_launcher.dart",
+            "args": [
+                "--flavor",
+                "stage",
+                "--dart-define=FLAVOR=stage"
+            ]
+        },
+        {
+            "name": "Flutter - dev",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/features/launchers/dev_launcher.dart",
+            "args": [
+                "--flavor",
+                "dev",
+                "--dart-define=FLAVOR=dev"
+            ]
+        }
+    ]
+}

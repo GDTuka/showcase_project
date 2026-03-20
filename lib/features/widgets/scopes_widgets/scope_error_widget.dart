@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:showcase_project/features/widgets/button/app_button.dart';
 
 class ScopeErrorWidget extends StatelessWidget {
   const ScopeErrorWidget({super.key, this.error, this.onRetry});
@@ -39,26 +40,11 @@ class ScopeErrorWidget extends StatelessWidget {
                   const SizedBox(height: 24),
                 ],
                 const Spacer(),
-                SizedBox(
-                  width: double.infinity,
-                  height: 56,
-                  child: ElevatedButton(
-                    onPressed: onRetry ?? () => _retryInitialization(context),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF6C63FF),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      elevation: 0,
-                    ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.refresh, size: 20),
-                        SizedBox(width: 8),
-                        Text('Попробовать снова', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                      ],
-                    ),
-                  ),
+                AppButton.primaryFilled(
+                  text: 'Попробовать снова',
+                  icon: Icons.refresh,
+                  isExpanded: true,
+                  onTap: onRetry ?? () => _retryInitialization(context),
                 ),
                 const SizedBox(height: 16),
               ],

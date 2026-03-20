@@ -1,24 +1,18 @@
 /// Модель запроса для авторизации пользователя
 class LoginRequest {
-  /// Логин пользователя
-  final String login;
-  
-  /// Пароль пользователя в открытом виде
-  final String password;
+  /// Номер телефона пользователя
+  final String phone;
+
+  /// Код из СМС
+  final String code;
 
   /// Создает модель запроса авторизации
-  /// [String login] - логин
-  /// [String password] - пароль
-  LoginRequest({
-    required this.login,
-    required this.password,
-  });
+  /// [String phone] - номер телефона
+  /// [String code] - код из СМС
+  LoginRequest({required this.phone, required this.code});
 
   /// Преобразует модель в JSON формат для отправки на сервер
   Map<String, dynamic> toJson() {
-    return {
-      'login': login,
-      'password': password,
-    };
+    return {'phone': phone, 'code': code};
   }
 }

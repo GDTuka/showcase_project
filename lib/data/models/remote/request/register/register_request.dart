@@ -2,29 +2,21 @@
 class RegisterRequest {
   /// Желаемый логин пользователя
   final String login;
-  
+
   /// Номер телефона пользователя
   final String phone;
-  
-  /// Пароль пользователя в открытом виде
-  final String password;
+
+  /// Код из СМС
+  final String code;
 
   /// Создает модель запроса регистрации
   /// [String login] - логин
   /// [String phone] - телефон
-  /// [String password] - пароль
-  RegisterRequest({
-    required this.login,
-    required this.phone,
-    required this.password,
-  });
+  /// [String code] - код из СМС
+  RegisterRequest({required this.login, required this.phone, required this.code});
 
   /// Преобразует модель в JSON формат для отправки на сервер
   Map<String, dynamic> toJson() {
-    return {
-      'login': login,
-      'phone': phone,
-      'password': password,
-    };
+    return {'login': login, 'phone': phone, 'code': code};
   }
 }

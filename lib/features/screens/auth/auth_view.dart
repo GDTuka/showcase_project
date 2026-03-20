@@ -11,25 +11,43 @@ class AuthView extends WidgetView<IAuthVm> {
   @override
   Widget build(IAuthVm vm, BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Авторизация / Регистрация')),
+      appBar: AppBar(
+        title: EntityStateNotifierBuilder(
+          listenableEntityState: vm.isLoginModeListenable,
+          builder: (context, data) {
+            return Text(data ?? false ? 'Авторизация' : 'Регистрация');
+          },
+        ),
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: EntityStateNotifierBuilder<bool>(
-            listenableEntityState: vm.isCodeSentListenable,
-            builder: (context, isCodeSent) {
-              if (isCodeSent ?? false) {
-                return RegisterScreenWidget(
-                  phoneController: vm.phoneController,
-                  codeController: vm.codeController,
+            listenableEntityState: vm.isLoginModeListenable,
+            builder: (context, isLoginMode) {
+              if (isLoginMode ?? false) {
+                return AuthScreenWidget(
+                  authPhoneController: vm.authPhoneController,
+                  loginController: vm.loginController,
                   isLoadingListenable: vm.isLoadingListenable,
+                  isLoginModeListenable: vm.isLoginModeListenable,
+                  errorListenable: vm.errorListenable,
+                  sendCodeButtonEnable: vm.sendCodeButtonEnableListenable,
                   onSubmit: vm.submit,
+                  onToggleMode: vm.toggleMode,
                 );
               }
-              return AuthScreenWidget(
-                phoneController: vm.phoneController,
+              return RegisterScreenWidget(
+                regPhoneController: vm.regPhoneController,
+
+                regCodeController: vm.regCodeController,
+                loginController: vm.loginController,
+                codeSentListenable: vm.isCodeSentListenable,
                 isLoadingListenable: vm.isLoadingListenable,
+                errorListenable: vm.errorListenable,
+                sendCodeButtonEnableListenable: vm.sendCodeButtonEnableListenable,
                 onSubmit: vm.submit,
+                onToggleMode: vm.toggleMode,
               );
             },
           ),

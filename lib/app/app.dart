@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:overlay_notifications/overlay_notifications.dart';
 import 'package:showcase_project/di/scopes/global_scope.dart';
 import 'package:showcase_project/features/theme/theme.dart';
 import 'package:showcase_project/features/utils/flavor.dart';
@@ -16,6 +17,12 @@ class _AppState extends State<App> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!OverlayNotification().hasInited) {
+        OverlayNotification().init(context: context);
+      }
+    });
+
     _appTheme.addListener(_onThemeChanged);
   }
 
