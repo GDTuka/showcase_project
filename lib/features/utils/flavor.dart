@@ -17,7 +17,7 @@ enum Flavor {
       case Flavor.stage:
         return 'https://stage.api.com';
       case Flavor.dev:
-        return 'http://192.168.237.130:8080';
+        return 'http://172.18.0.1:8080';
     }
   }
 }

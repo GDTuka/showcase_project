@@ -12,6 +12,7 @@ UserDto _$UserDtoFromJson(Map<String, dynamic> json) => UserDto(
   phone: json['phone'] as String,
   avatar: json['avatar'] as String?,
   createdAt: json['created_at'] as String,
+  profile: json['profile'] == null ? null : ProfileDto.fromJson(json['profile'] as Map<String, dynamic>),
 );
 
 Map<String, dynamic> _$UserDtoToJson(UserDto instance) => <String, dynamic>{
@@ -20,6 +21,7 @@ Map<String, dynamic> _$UserDtoToJson(UserDto instance) => <String, dynamic>{
   'phone': instance.phone,
   'avatar': instance.avatar,
   'created_at': instance.createdAt,
+  'profile': instance.profile,
 };
 
 ProfileDto _$ProfileDtoFromJson(Map<String, dynamic> json) => ProfileDto(
@@ -46,24 +48,6 @@ Map<String, dynamic> _$ProfileDtoToJson(ProfileDto instance) => <String, dynamic
   'gender': instance.gender,
   'created_at': instance.createdAt,
   'updated_at': instance.updatedAt,
-};
-
-UserWithProfileDto _$UserWithProfileDtoFromJson(Map<String, dynamic> json) => UserWithProfileDto(
-  id: (json['id'] as num).toInt(),
-  login: json['login'] as String,
-  phone: json['phone'] as String,
-  avatar: json['avatar'] as String?,
-  createdAt: json['created_at'] as String,
-  profile: json['profile'] == null ? null : ProfileDto.fromJson(json['profile'] as Map<String, dynamic>),
-);
-
-Map<String, dynamic> _$UserWithProfileDtoToJson(UserWithProfileDto instance) => <String, dynamic>{
-  'id': instance.id,
-  'login': instance.login,
-  'phone': instance.phone,
-  'avatar': instance.avatar,
-  'created_at': instance.createdAt,
-  'profile': instance.profile,
 };
 
 CheckUniqueRequest _$CheckUniqueRequestFromJson(Map<String, dynamic> json) =>
@@ -190,4 +174,12 @@ Map<String, dynamic> _$UserSearchResponseToJson(UserSearchResponse instance) => 
   'users': instance.users,
   'limit': instance.limit,
   'offset': instance.offset,
+};
+
+UploadAvatarResponse _$UploadAvatarResponseFromJson(Map<String, dynamic> json) =>
+    UploadAvatarResponse(message: json['message'] as String, avatar: json['avatar'] as String);
+
+Map<String, dynamic> _$UploadAvatarResponseToJson(UploadAvatarResponse instance) => <String, dynamic>{
+  'message': instance.message,
+  'avatar': instance.avatar,
 };

@@ -33,10 +33,10 @@ class UserApi {
   }
 
   /// Получает профиль текущего пользователя с данными профиля
-  Future<UserWithProfileDto> getCurrentUser() async {
+  Future<UserDto> getCurrentUser() async {
     try {
       final response = await _dio.get('/user/me');
-      return UserWithProfileDto.fromJson(response.data as Map<String, dynamic>);
+      return UserDto.fromJson(response.data as Map<String, dynamic>);
     } on DioException catch (e) {
       throw _handleError(e);
     }
@@ -44,10 +44,10 @@ class UserApi {
 
   /// Получает профиль другого пользователя по ID
   /// [int userId] - ID пользователя
-  Future<UserWithProfileDto> getUserById(int userId) async {
+  Future<UserDto> getUserById(int userId) async {
     try {
       final response = await _dio.get('/user/$userId');
-      return UserWithProfileDto.fromJson(response.data as Map<String, dynamic>);
+      return UserDto.fromJson(response.data as Map<String, dynamic>);
     } on DioException catch (e) {
       throw _handleError(e);
     }

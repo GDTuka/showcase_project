@@ -33,6 +33,9 @@ dependencies:
   dio: ^5.9.2
   json_serializable: ^6.13.1
   json_annotation: ^4.11.0
+  cached_network_image: ^3.4.1
+  wechat_assets_picker: ^10.1.1
+  wechat_camera_picker: ^4.5.0
 
 dev_dependencies:
   flutter_test:

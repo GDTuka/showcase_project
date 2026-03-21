@@ -4,14 +4,17 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:octopus/octopus.dart';
 import 'package:padi/padi.dart';
 import 'package:showcase_project/data/api/api/auth_api.dart';
+import 'package:showcase_project/data/api/api/image_api.dart';
 import 'package:showcase_project/data/api/api/profile_api.dart';
 import 'package:showcase_project/data/api/api/relation_api.dart';
 import 'package:showcase_project/data/api/api/sms_api.dart';
 import 'package:showcase_project/data/api/api/user_api.dart';
+import 'package:showcase_project/data/api/interceptors/jwt_interceptor.dart';
 import 'package:showcase_project/data/api/interceptors/logger_interceptor.dart';
 import 'package:showcase_project/data/storage/jwt_storage.dart';
 import 'package:showcase_project/data/storage/refersh_token_storage.dart';
 import 'package:showcase_project/domain/auth_repository.dart';
+import 'package:showcase_project/domain/image_repository.dart';
 import 'package:showcase_project/domain/profile_repository.dart';
 import 'package:showcase_project/domain/relation_repository.dart';
 import 'package:showcase_project/domain/user_repository.dart';
@@ -42,6 +45,9 @@ class GlobalScope extends Padi {
 
   /// Репозиторий для работы с СМС
   late final ISmsRepository smsRepository;
+
+  /// Репозиторий для работы с изображениями
+  late final IImageRepository imageRepository;
 
   /// Secure storage для хранения конфиденциальных данных
   late final FlutterSecureStorage secureStorage;
@@ -84,9 +90,11 @@ class GlobalScope extends Padi {
       ),
     );
     dio.interceptors.add(LoggerInterceptor());
+    dio.interceptors.add(JwtInterceptor(tokenService: jwtStorage));
 
     // Инициализация API
     final authApi = AuthApi(dio: dio);
+    final imageApi = ImageApi(dio: dio);
     final userApi = UserApi(dio: dio);
     final smsApi = SmsApi(dio: dio);
     final profileApi = ProfileApi(dio: dio);
@@ -94,6 +102,7 @@ class GlobalScope extends Padi {
 
     // Инициализация репозиториев
     authRepository = AuthRepository(authApi: authApi, jwtStorage: jwtStorage, refreshTokenStorage: refreshTokenStorage);
+    imageRepository = ImageRepository(imageApi: imageApi);
     userRepository = UserRepository(userApi: userApi);
     profileRepository = ProfileRepository(profileApi: profileApi);
     relationRepository = RelationRepository(relationApi: relationApi);

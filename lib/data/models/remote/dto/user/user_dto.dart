@@ -17,12 +17,22 @@ class UserDto {
   /// Дата и время создания аккаунта в формате ISO 8601
   final String createdAt;
 
+  /// Профиль пользователя
+  final ProfileDto? profile;
+
   /// Создает экземпляр модели пользователя
   /// [int id] - идентификатор
   /// [String login] - логин
   /// [String phone] - телефон
   /// [String createdAt] - дата создания
-  UserDto({required this.id, required this.login, required this.phone, this.avatar, required this.createdAt});
+  UserDto({
+    required this.id,
+    required this.login,
+    required this.phone,
+    this.avatar,
+    required this.createdAt,
+    this.profile,
+  });
 
   /// Фабричный метод для создания [UserDto] из JSON
   /// [Map<String, dynamic> json] - данные от сервера

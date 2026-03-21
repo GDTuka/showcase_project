@@ -4,6 +4,7 @@ import 'package:showcase_project/di/octopus_helper/octopus_scope_helper.dart';
 import 'package:showcase_project/features/screens/add_habbit/add_habbit_view.dart';
 import 'package:showcase_project/features/screens/auth/auth_view.dart';
 import 'package:showcase_project/features/screens/home/home_view.dart';
+import 'package:showcase_project/features/screens/image_screen/image_screen_view.dart';
 import 'package:showcase_project/features/screens/profile/profile_view.dart';
 
 /// Перечисление всех доступных маршрутов в приложении
@@ -22,7 +23,10 @@ enum Routes with OctopusRoute {
   profile('profile'),
 
   /// Экран настроек приложения
-  settings('settings');
+  settings('settings'),
+
+  /// Экран просмотра фото
+  imageScreen('imageScreen');
 
   // ignore: unused_element, unused_element_parameter
   const Routes(this.name, {this.title});
@@ -43,8 +47,9 @@ enum Routes with OctopusRoute {
   Widget builder(BuildContext context, OctopusState state, OctopusNode node) => switch (this) {
     Routes.addHabbit => AddHabbitView(),
     Routes.auth => AuthScopeWrapper(child: AuthView()),
-    Routes.home => HomeView(),
+    Routes.home => UserScopeWrapper(child: HomeView()),
     Routes.profile => ProfileView(),
     Routes.settings => const Text('Settings'),
+    Routes.imageScreen => UserScopeWrapper(child: ImageScreenView()),
   };
 }

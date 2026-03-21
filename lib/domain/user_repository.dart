@@ -1,16 +1,19 @@
+import 'package:flutter/material.dart';
 import 'package:showcase_project/data/api/api/user_api.dart';
 import 'package:showcase_project/data/models/remote/models.dart';
 
 /// Интерфейс репозитория для работы с пользователями
 abstract interface class IUserRepository {
   /// Получает профиль текущего пользователя с данными профиля
-  Future<UserWithProfileDto> getCurrentUser();
+  Future<void> getCurrentUser();
 
   /// Получает профиль другого пользователя по ID
-  Future<UserWithProfileDto> getUserById(int userId);
+  Future<UserDto> getUserById(int userId);
 
   /// Ищет пользователей с пагинацией и фильтрацией
   Future<UserSearchResponse> searchUsers({String? login, String? relationType, int? limit, int? offset});
+
+  ValueNotifier<UserDto?> get userNotifier;
 }
 
 /// Репозиторий для работы с пользователями
@@ -20,15 +23,19 @@ class UserRepository implements IUserRepository {
   /// [UserApi userApi] - API клиент для выполнения запросов
   UserRepository({required UserApi userApi}) : _userApi = userApi;
 
+  @override
+  final ValueNotifier<UserDto?> userNotifier = ValueNotifier<UserDto?>(null);
+
   final UserApi _userApi;
 
   @override
-  Future<UserWithProfileDto> getCurrentUser() async {
-    return _userApi.getCurrentUser();
+  Future<void> getCurrentUser() async {
+    final u = await _userApi.getCurrentUser();
+    userNotifier.value = u;
   }
 
   @override
-  Future<UserWithProfileDto> getUserById(int userId) async {
+  Future<UserDto> getUserById(int userId) async {
     return _userApi.getUserById(userId);
   }
 
