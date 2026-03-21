@@ -13,16 +13,20 @@ class AuthScreenWidget extends StatelessWidget {
     required this.isLoadingListenable,
     required this.isLoginModeListenable,
     required this.onSubmit,
+    required this.smsCodeController,
     required this.onToggleMode,
+    required this.isSmsCodeFieldEnable,
     required this.sendCodeButtonEnable,
     required this.errorListenable,
   });
 
   final AppTextController authPhoneController;
+  final AppTextController smsCodeController;
   final AppTextController loginController;
   final EntityValueListenable<bool> isLoadingListenable;
   final EntityValueListenable<bool> isLoginModeListenable;
   final EntityValueListenable<bool> sendCodeButtonEnable;
+  final EntityValueListenable<bool> isSmsCodeFieldEnable;
   final EntityValueListenable<String?> errorListenable;
   final VoidCallback onSubmit;
   final VoidCallback onToggleMode;
@@ -43,13 +47,21 @@ class AuthScreenWidget extends StatelessWidget {
             return Text(data, style: context.textStyles.body1.copyWith(color: context.colors.error));
           },
         ),
-
+        SizedBox(height: 16),
         // Поле телефона (разное для логина и регистрации, чтобы сохранять стейт)
         AppTextField(controller: authPhoneController, keyboardType: TextInputType.phone),
         SizedBox(height: 16),
         // Кнопка переключения режима
         AppButton.textLike(text: "Нет аккаунта? Зарегистрируйтесь", onTap: onToggleMode),
-
+        EntityStateNotifierBuilder(
+          listenableEntityState: isSmsCodeFieldEnable,
+          builder: (context, data) {
+            if (data ?? false) {
+              return AppTextField(controller: smsCodeController);
+            }
+            return SizedBox();
+          },
+        ),
         const Spacer(),
 
         const SizedBox(height: 16),

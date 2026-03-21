@@ -13,9 +13,9 @@ class UserApi {
   late final Dio _dio;
 
   /// Отправляет СМС код текущему пользователю
-  Future<void> sendSmsCode({required String phone}) async {
+  Future<void> sendSmsCode({required String phone, required SmsCodeType type}) async {
     try {
-      await _dio.post('/user/sms/send', data: {'phone': phone});
+      await _dio.post('/user/sms/send', data: {'phone': phone, 'type': type.name});
     } on DioException catch (e) {
       throw _handleError(e);
     }

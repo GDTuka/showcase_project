@@ -4,7 +4,7 @@ import 'package:showcase_project/data/models/remote/models.dart';
 /// Интерфейс репозитория для работы с СМС
 abstract interface class ISmsRepository {
   /// Отправляет СМС код текущему пользователю
-  Future<void> sendSmsCode({required String phone});
+  Future<void> sendSmsCode({required String phone, required SmsCodeType type});
 
   /// Проверяет СМС код
   Future<bool> checkSmsCode({required String code});
@@ -20,8 +20,8 @@ class SmsRepository implements ISmsRepository {
   final ISmsApi _smsApi;
 
   @override
-  Future<void> sendSmsCode({required String phone}) async {
-    return _smsApi.sendSmsCode(SendSmsCodeRequest(phone: phone));
+  Future<void> sendSmsCode({required String phone, required SmsCodeType type}) async {
+    return _smsApi.sendSmsCode(SendSmsCodeRequest(phone: phone, type: type));
   }
 
   @override

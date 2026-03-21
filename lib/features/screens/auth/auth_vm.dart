@@ -2,10 +2,13 @@ import 'package:dio/dio.dart';
 import 'package:evvm/evvm.dart';
 import 'package:evvm/evvm_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:octopus/octopus.dart';
 import 'package:showcase_project/di/scopes/auth_scope.dart';
 import 'package:showcase_project/di/scopes/global_scope.dart';
+import 'package:showcase_project/data/models/remote/models.dart';
 import 'package:showcase_project/domain/auth_repository.dart';
 import 'package:showcase_project/domain/sms_repository.dart';
+import 'package:showcase_project/features/navigation/router.dart';
 import 'package:showcase_project/features/screens/auth/auth_view.dart';
 import 'package:showcase_project/features/utils/app_text_field/text_field_controller.dart';
 
@@ -32,7 +35,7 @@ abstract interface class IAuthVm implements IViewModel {
 
   /// Состояние, указывающее был ли уже отправлен СМС код на номер телефона
   /// Если true - показываем поле ввода кода, если false - поле ввода телефона
-  EntityValueListenable<bool> get isCodeSentListenable;
+  EntityValueListenable<bool> get isCodeEnterAvailableListenable;
 
   /// Состояние режима: true - Авторизация, false - Регистрация
   EntityValueListenable<bool> get isLoginModeListenable;
@@ -97,7 +100,7 @@ class AuthVm extends ViewModel<AuthView> implements IAuthVm {
   final _isLoadingEntity = EntityStateNotifier<bool>.value(false);
 
   /// Внутреннее состояние отправленного кода
-  final _isCodeSentEntity = EntityStateNotifier<bool>.value(false);
+  final _isCodeEnterAvailableEntity = EntityStateNotifier<bool>.value(false);
 
   /// Внутреннее состояние режима
   final _isLoginModeEntity = EntityStateNotifier<bool>.value(true);
@@ -125,7 +128,7 @@ class AuthVm extends ViewModel<AuthView> implements IAuthVm {
   EntityValueListenable<bool> get isLoadingListenable => _isLoadingEntity;
 
   @override
-  EntityValueListenable<bool> get isCodeSentListenable => _isCodeSentEntity;
+  EntityValueListenable<bool> get isCodeEnterAvailableListenable => _isCodeEnterAvailableEntity;
 
   @override
   EntityValueListenable<bool> get isLoginModeListenable => _isLoginModeEntity;
@@ -146,6 +149,11 @@ class AuthVm extends ViewModel<AuthView> implements IAuthVm {
     if (digits.length < 10) {
       _sendCodeButtonEnableEntity.content(false);
       return ValidatorResponse(FieldStateType.error, message: 'Неполный номер телефона');
+    }
+    if (_isLoginModeEntity.value.data ?? false) {
+      _sendLoginSmsCode();
+    } else {
+      _sendRegistrationSmsCode();
     }
     _sendCodeButtonEnableEntity.content(true);
     return ValidatorResponse(FieldStateType.success);
@@ -169,9 +177,9 @@ class AuthVm extends ViewModel<AuthView> implements IAuthVm {
       return ValidatorResponse(FieldStateType.none);
     }
 
-    final regExp = RegExp(r'^[а-яА-ЯёЁ]+$');
+    final regExp = RegExp(r'^[a-zA-Z]+$');
     if (!regExp.hasMatch(value)) {
-      return ValidatorResponse(FieldStateType.error, message: 'Только русские буквы без спецсимволов и пробелов');
+      return ValidatorResponse(FieldStateType.error, message: 'Только английские буквы без спецсимволов и пробелов');
     }
 
     if (value.length < 3 || value.length > 30) {
@@ -206,7 +214,7 @@ class AuthVm extends ViewModel<AuthView> implements IAuthVm {
     _loginController.dispose();
 
     _isLoadingEntity.dispose();
-    _isCodeSentEntity.dispose();
+    _isCodeEnterAvailableEntity.dispose();
     _isLoginModeEntity.dispose();
     super.dispose();
   }
@@ -215,7 +223,7 @@ class AuthVm extends ViewModel<AuthView> implements IAuthVm {
   void toggleMode() {
     final currentMode = _isLoginModeEntity.value.data ?? true;
     _isLoginModeEntity.content(!currentMode);
-    _isCodeSentEntity.content(false);
+    _isCodeEnterAvailableEntity.content(false);
     _authCodeController.clear();
     _regCodeController.clear();
     _authCodeController.updateFieldState(FieldStateType.none, '');
@@ -224,7 +232,7 @@ class AuthVm extends ViewModel<AuthView> implements IAuthVm {
 
   void _onAuthPhoneChanged() {
     if (!(_isLoginModeEntity.value.data ?? true)) return;
-    if (!(_isCodeSentEntity.value.data ?? false)) {
+    if (!(_isCodeEnterAvailableEntity.value.data ?? false)) {
       final unmaskedPhone = _authPhoneController.unmasked;
       if (_authPhoneController.fieldState == FieldStateType.error) {
         _authPhoneController.updateFieldState(FieldStateType.none, '');
@@ -235,7 +243,7 @@ class AuthVm extends ViewModel<AuthView> implements IAuthVm {
 
   void _onRegPhoneChanged() {
     if (_isLoginModeEntity.value.data ?? true) return;
-    if (!(_isCodeSentEntity.value.data ?? false)) {
+    if (!(_isCodeEnterAvailableEntity.value.data ?? false)) {
       final unmaskedPhone = _regPhoneController.unmasked;
       if (_regPhoneController.fieldState == FieldStateType.error) {
         _regPhoneController.updateFieldState(FieldStateType.none, '');
@@ -253,7 +261,7 @@ class AuthVm extends ViewModel<AuthView> implements IAuthVm {
 
   void _onRegLoginChanged() {
     if (_isLoginModeEntity.value.data ?? true) return;
-    if (!(_isCodeSentEntity.value.data ?? false)) {
+    if (!(_isCodeEnterAvailableEntity.value.data ?? false)) {
       final login = _loginController.text;
       if (_loginController.fieldState == FieldStateType.error) {
         _loginController.updateFieldState(FieldStateType.none, '');
@@ -269,7 +277,7 @@ class AuthVm extends ViewModel<AuthView> implements IAuthVm {
 
   void _onAuthCodeChanged() {
     if (!(_isLoginModeEntity.value.data ?? true)) return;
-    if (_isCodeSentEntity.value.data ?? false) {
+    if (_isCodeEnterAvailableEntity.value.data ?? false) {
       final unmaskedCode = _authCodeController.unmasked;
       if (_authCodeController.fieldState == FieldStateType.error) {
         _authCodeController.updateFieldState(FieldStateType.none, '');
@@ -280,7 +288,7 @@ class AuthVm extends ViewModel<AuthView> implements IAuthVm {
 
   void _onRegCodeChanged() {
     if (_isLoginModeEntity.value.data ?? true) return;
-    if (_isCodeSentEntity.value.data ?? false) {
+    if (_isCodeEnterAvailableEntity.value.data ?? false) {
       final unmaskedCode = _regCodeController.unmasked;
       if (_regCodeController.fieldState == FieldStateType.error) {
         _regCodeController.updateFieldState(FieldStateType.none, '');
@@ -294,7 +302,7 @@ class AuthVm extends ViewModel<AuthView> implements IAuthVm {
     if (_isLoadingEntity.value.data ?? false) return;
 
     final isLoginMode = _isLoginModeEntity.value.data ?? true;
-    final isCodeSent = _isCodeSentEntity.value.data ?? false;
+    final isCodeSent = _isCodeEnterAvailableEntity.value.data ?? false;
 
     if (!await _validateFields(isLoginMode, isCodeSent)) return;
 
@@ -356,7 +364,7 @@ class AuthVm extends ViewModel<AuthView> implements IAuthVm {
     try {
       final isUnique = await _authRepository.checkPhoneUnique(phone);
       if (isUnique) {
-        _authPhoneController.updateFieldState(FieldStateType.error, 'Пользователь не найден, зарегистрируйтесь');
+        _errorEntity.content('Телефон не найден, зарегистрируйтесь');
         return;
       }
     } on DioException catch (e) {
@@ -365,8 +373,8 @@ class AuthVm extends ViewModel<AuthView> implements IAuthVm {
     }
 
     try {
-      await _smsRepository.sendSmsCode(phone: phone);
-      _isCodeSentEntity.content(true);
+      await _smsRepository.sendSmsCode(phone: phone, type: SmsCodeType.auth);
+      _isCodeEnterAvailableEntity.content(true);
     } on DioException catch (e) {
       _handleDioError(e);
     }
@@ -378,7 +386,13 @@ class AuthVm extends ViewModel<AuthView> implements IAuthVm {
 
     try {
       await _authRepository.login(phone: phone, code: code);
-      // TODO: Навигация после успешной авторизации
+      context.octopus.setState(
+        (state) => OctopusState(
+          children: [OctopusNode(name: Routes.home.name, arguments: {}, children: [])],
+          arguments: {},
+          intention: OctopusStateIntention.auto,
+        ),
+      );
     } on DioException catch (e) {
       _handleDioError(e);
       _authCodeController.updateFieldState(FieldStateType.error, 'Неверный код');
@@ -420,8 +434,8 @@ class AuthVm extends ViewModel<AuthView> implements IAuthVm {
     }
 
     try {
-      await _smsRepository.sendSmsCode(phone: phone);
-      _isCodeSentEntity.content(true);
+      await _smsRepository.sendSmsCode(phone: phone, type: SmsCodeType.register);
+      _isCodeEnterAvailableEntity.content(true);
     } on DioException catch (e) {
       _handleDioError(e);
     }
@@ -434,7 +448,13 @@ class AuthVm extends ViewModel<AuthView> implements IAuthVm {
 
     try {
       await _authRepository.register(login: login, phone: phone, code: code);
-      // TODO: Навигация после успешной регистрации
+      context.octopus.setState(
+        (state) => OctopusState(
+          children: [OctopusNode(name: Routes.home.name, arguments: {}, children: [])],
+          arguments: {},
+          intention: OctopusStateIntention.auto,
+        ),
+      );
     } on DioException catch (e) {
       _handleDioError(e);
       _regCodeController.updateFieldState(FieldStateType.error, 'Неверный код');

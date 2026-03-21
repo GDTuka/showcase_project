@@ -45,16 +45,21 @@ class RegisterScreenWidget extends StatelessWidget {
             return Text(data, style: context.textStyles.body1.copyWith(color: context.colors.error));
           },
         ),
-        // Если регистрация, показываем поле логина (только для чтения)
-        AppTextField(controller: loginController, keyboardType: TextInputType.text, readOnly: true),
-        const SizedBox(height: 16),
-
-        AppTextField(
-          controller: regPhoneController,
-          keyboardType: TextInputType.phone,
-          readOnly: true, // Запрещаем редактировать телефон на экране ввода кода
+        EntityStateNotifierBuilder(
+          listenableEntityState: codeSentListenable,
+          builder: (context, codeSent) {
+            final isReadOnly = codeSent ?? false;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                AppTextField(controller: loginController, keyboardType: TextInputType.text, readOnly: isReadOnly),
+                const SizedBox(height: 16),
+                AppTextField(controller: regPhoneController, keyboardType: TextInputType.phone, readOnly: isReadOnly),
+                const SizedBox(height: 16),
+              ],
+            );
+          },
         ),
-        const SizedBox(height: 16),
 
         EntityStateNotifierBuilder(
           listenableEntityState: codeSentListenable,

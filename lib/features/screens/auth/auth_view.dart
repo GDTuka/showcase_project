@@ -29,6 +29,8 @@ class AuthView extends WidgetView<IAuthVm> {
                 return AuthScreenWidget(
                   authPhoneController: vm.authPhoneController,
                   loginController: vm.loginController,
+                  smsCodeController: vm.authCodeController,
+                  isSmsCodeFieldEnable: vm.isCodeEnterAvailableListenable,
                   isLoadingListenable: vm.isLoadingListenable,
                   isLoginModeListenable: vm.isLoginModeListenable,
                   errorListenable: vm.errorListenable,
@@ -39,10 +41,9 @@ class AuthView extends WidgetView<IAuthVm> {
               }
               return RegisterScreenWidget(
                 regPhoneController: vm.regPhoneController,
-
                 regCodeController: vm.regCodeController,
                 loginController: vm.loginController,
-                codeSentListenable: vm.isCodeSentListenable,
+                codeSentListenable: vm.isCodeEnterAvailableListenable,
                 isLoadingListenable: vm.isLoadingListenable,
                 errorListenable: vm.errorListenable,
                 sendCodeButtonEnableListenable: vm.sendCodeButtonEnableListenable,

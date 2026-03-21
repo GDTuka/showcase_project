@@ -1,10 +1,13 @@
 part of '../models.dart';
 
+enum SmsCodeType { auth, register }
+
 @JsonSerializable(fieldRename: FieldRename.snake)
 class SendSmsCodeRequest {
   final String phone;
+  final SmsCodeType type;
 
-  SendSmsCodeRequest({required this.phone});
+  SendSmsCodeRequest({required this.phone, required this.type});
 
   factory SendSmsCodeRequest.fromJson(Map<String, dynamic> json) => _$SendSmsCodeRequestFromJson(json);
 

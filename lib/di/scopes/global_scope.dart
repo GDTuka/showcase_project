@@ -66,6 +66,11 @@ class GlobalScope extends Padi {
     router = Octopus(
       routes: Routes.values,
       guards: [AuthGuard(jwtStorage: jwtStorage)],
+      initialState: OctopusState(
+        children: [OctopusNode(name: Routes.home.name, arguments: {}, children: [])],
+        arguments: {},
+        intention: OctopusStateIntention.auto,
+      ),
     );
 
     // Инициализация сетевого клиента

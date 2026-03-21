@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:octopus/octopus.dart';
 import 'package:showcase_project/di/octopus_helper/octopus_scope_helper.dart';
+import 'package:showcase_project/features/screens/add_habbit/add_habbit_view.dart';
 import 'package:showcase_project/features/screens/auth/auth_view.dart';
+import 'package:showcase_project/features/screens/home/home_view.dart';
+import 'package:showcase_project/features/screens/profile/profile_view.dart';
 
 /// Перечисление всех доступных маршрутов в приложении
 /// Использует миксин [OctopusRoute] для интеграции с пакетом маршрутизации octopus
@@ -38,10 +41,10 @@ enum Routes with OctopusRoute {
   /// [OctopusNode node] - текущий узел маршрутизации
   @override
   Widget builder(BuildContext context, OctopusState state, OctopusNode node) => switch (this) {
-    Routes.addHabbit => const Text('Add Habbit'),
+    Routes.addHabbit => AddHabbitView(),
     Routes.auth => AuthScopeWrapper(child: AuthView()),
-    Routes.home => const Text('Home'),
-    Routes.profile => const Text('Profile'),
+    Routes.home => HomeView(),
+    Routes.profile => ProfileView(),
     Routes.settings => const Text('Settings'),
   };
 }
