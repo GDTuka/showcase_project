@@ -1,7 +1,5 @@
 import 'package:showcase_project/data/api/api/auth_api.dart';
-import 'package:showcase_project/data/models/remote/dto/user/user_dto.dart';
-import 'package:showcase_project/data/models/remote/request/login/login_request.dart';
-import 'package:showcase_project/data/models/remote/request/register/register_request.dart';
+import 'package:showcase_project/data/models/remote/models.dart';
 import 'package:showcase_project/data/storage/jwt_storage.dart';
 import 'package:showcase_project/data/storage/refersh_token_storage.dart';
 
@@ -18,6 +16,8 @@ abstract interface class IAuthRepository {
 
   /// Проверяет уникальность логина
   Future<bool> checkLoginUnique(String login);
+
+  Future<void> refreshSession();
 }
 
 /// Репозиторий для работы с авторизацией
@@ -81,5 +81,26 @@ class AuthRepository implements IAuthRepository {
   @override
   Future<bool> checkLoginUnique(String login) async {
     return _authApi.checkLoginUnique(login);
+  }
+
+  @override
+  Future<void> refreshSession() async {
+    final refreshToken = await _refreshTokenStorage.getToken();
+
+    if (refreshToken == null || refreshToken.isEmpty) {
+      throw Exception('Missing refresh token');
+    }
+
+    final res = await _authApi.refresh(refreshToken);
+
+    final jwt = res.headers.value('X-Access-Token');
+    final refresh = res.headers.value('X-Refresh-Token');
+
+    if (jwt == null || refresh == null) {
+      throw Exception('Missing authentication tokens');
+    }
+
+    await _jwtStorage.writeToken(jwt);
+    await _refreshTokenStorage.writeToken(refresh);
   }
 }

@@ -1,7 +1,5 @@
 import 'package:showcase_project/data/api/api/user_api.dart';
-import 'package:showcase_project/data/models/remote/dto/user/user_with_profile_dto.dart';
-import 'package:showcase_project/data/models/remote/request/user_search/user_search_request.dart';
-import 'package:showcase_project/data/models/remote/response/user_search/user_search_response.dart';
+import 'package:showcase_project/data/models/remote/models.dart';
 
 /// Интерфейс репозитория для работы с пользователями
 abstract interface class IUserRepository {

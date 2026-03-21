@@ -1,5 +1,5 @@
-import 'package:showcase_project/data/api/api/user_api.dart';
-import 'package:showcase_project/data/models/remote/request/sms_check/sms_check_request.dart';
+import 'package:showcase_project/data/api/api/sms_api.dart';
+import 'package:showcase_project/data/models/remote/models.dart';
 
 /// Интерфейс репозитория для работы с СМС
 abstract interface class ISmsRepository {
@@ -7,26 +7,26 @@ abstract interface class ISmsRepository {
   Future<void> sendSmsCode({required String phone});
 
   /// Проверяет СМС код
-  Future<void> checkSmsCode({required String code});
+  Future<bool> checkSmsCode({required String code});
 }
 
 /// Репозиторий для работы с СМС
 /// Скрывает детали реализации API от UI слоя
 class SmsRepository implements ISmsRepository {
-  /// Инициализирует репозиторий с зависимостью от [UserApi]
-  /// [UserApi userApi] - API клиент для выполнения запросов
-  SmsRepository({required UserApi userApi}) : _userApi = userApi;
+  /// Инициализирует репозиторий с зависимостью от [ISmsApi]
+  /// [ISmsApi smsApi] - API клиент для выполнения запросов
+  SmsRepository({required ISmsApi smsApi}) : _smsApi = smsApi;
 
-  final UserApi _userApi;
+  final ISmsApi _smsApi;
 
   @override
   Future<void> sendSmsCode({required String phone}) async {
-    return _userApi.sendSmsCode(phone: phone);
+    return _smsApi.sendSmsCode(SendSmsCodeRequest(phone: phone));
   }
 
   @override
   Future<bool> checkSmsCode({required String code}) async {
     final request = SmsCheckRequest(code: code);
-    return _userApi.checkSmsCode(request);
+    return _smsApi.checkSmsCode(request);
   }
 }

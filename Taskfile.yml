@@ -1,0 +1,27 @@
+version: '3'
+
+tasks:
+  build:gen:
+      - echo "[build:gen] Running dart build_runner..."
+      - dart run build_runner build --delete-conflicting-outputs
+  build:web:prod:
+      - echo "clean Flutter"
+      - flutter clean
+      - echo "get pub"
+      - flutter pub get
+      - echo "Building WEB APP"
+      - flutter build web -t lib/launchers/prod_launcher.dart
+  build:web:stage:
+      - echo "clean Flutter"
+      - flutter clean
+      - echo "get pub"
+      - flutter pub get
+      - echo "Building WEB APP"
+      - flutter build web -t lib/launchers/stage_launcher.dart
+  build:web:local:
+      - echo "clean Flutter"
+      - flutter clean
+      - echo "get pub"
+      - flutter pub get
+      - echo "Building WEB APP"
+      - flutter build web -t lib/launchers/local_launcher.dart

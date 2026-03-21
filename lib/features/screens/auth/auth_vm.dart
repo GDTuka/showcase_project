@@ -2,14 +2,12 @@ import 'package:dio/dio.dart';
 import 'package:evvm/evvm.dart';
 import 'package:evvm/evvm_helper.dart';
 import 'package:flutter/material.dart';
-import 'package:overlay_notifications/overlay_notifications.dart';
 import 'package:showcase_project/di/scopes/auth_scope.dart';
 import 'package:showcase_project/di/scopes/global_scope.dart';
 import 'package:showcase_project/domain/auth_repository.dart';
 import 'package:showcase_project/domain/sms_repository.dart';
 import 'package:showcase_project/features/screens/auth/auth_view.dart';
 import 'package:showcase_project/features/utils/app_text_field/text_field_controller.dart';
-import 'package:showcase_project/features/widgets/overlay_notification/overlay_notification_widget.dart';
 
 /// Интерфейс ViewModel для экрана авторизации и регистрации
 /// Содержит все необходимые свойства и методы для управления состоянием экрана

@@ -1,8 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:showcase_project/data/models/remote/dto/user/user_with_profile_dto.dart';
-import 'package:showcase_project/data/models/remote/request/sms_check/sms_check_request.dart';
-import 'package:showcase_project/data/models/remote/request/user_search/user_search_request.dart';
-import 'package:showcase_project/data/models/remote/response/user_search/user_search_response.dart';
+import 'package:showcase_project/data/models/remote/models.dart';
 
 /// Сервис для работы с API пользователей
 class UserApi {

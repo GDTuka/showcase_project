@@ -1,6 +1,7 @@
-import 'package:showcase_project/data/models/remote/dto/profile/profile_dto.dart';
+part of '../../models.dart';
 
 /// Модель данных пользователя с профилем
+@JsonSerializable(fieldRename: FieldRename.snake)
 class UserWithProfileDto {
   /// ID пользователя
   final int id;
@@ -15,7 +16,7 @@ class UserWithProfileDto {
   final String? avatar;
 
   /// Дата создания
-  final DateTime createdAt;
+  final String createdAt;
 
   /// Профиль пользователя (может быть null)
   final ProfileDto? profile;
@@ -31,26 +32,8 @@ class UserWithProfileDto {
   });
 
   /// Фабричный метод для создания [UserWithProfileDto] из JSON
-  factory UserWithProfileDto.fromJson(Map<String, dynamic> json) {
-    return UserWithProfileDto(
-      id: json['id'] as int,
-      login: json['login'] as String,
-      phone: json['phone'] as String,
-      avatar: json['avatar'] as String?,
-      createdAt: DateTime.parse(json['created_at'] as String),
-      profile: json['profile'] != null ? ProfileDto.fromJson(json['profile'] as Map<String, dynamic>) : null,
-    );
-  }
+  factory UserWithProfileDto.fromJson(Map<String, dynamic> json) => _$UserWithProfileDtoFromJson(json);
 
   /// Преобразует модель в JSON формат
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'login': login,
-      'phone': phone,
-      'avatar': avatar,
-      'created_at': createdAt.toIso8601String(),
-      'profile': profile?.toJson(),
-    };
-  }
+  Map<String, dynamic> toJson() => _$UserWithProfileDtoToJson(this);
 }

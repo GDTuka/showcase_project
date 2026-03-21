@@ -1,7 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:showcase_project/data/models/remote/request/check_unique/check_unique_request.dart';
-import 'package:showcase_project/data/models/remote/request/login/login_request.dart';
-import 'package:showcase_project/data/models/remote/request/register/register_request.dart';
+import 'package:showcase_project/data/models/remote/models.dart';
 
 /// Абстракция сервиса для работы с API авторизации.
 ///
@@ -19,6 +17,12 @@ abstract class IAuthApi {
   /// [request] — данные для входа.
   /// Возвращает сырое [Response] от сервера.
   Future<Response> login(LoginRequest request);
+
+  /// Обновляет токен доступа.
+  ///
+  /// [refreshToken] — токен обновления.
+  /// Возвращает сырое [Response] от сервера.
+  Future<Response> refresh(String refreshToken);
 
   /// Проверяет уникальность логина.
   ///
@@ -69,13 +73,23 @@ class AuthApi implements IAuthApi {
   }
 
   @override
+  Future<Response> refresh(String refreshToken) async {
+    try {
+      final response = await _dio.post(
+        '/auth/refresh',
+        options: Options(headers: {'Authorization': 'Bearer $refreshToken'}),
+      );
+      return response;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  @override
   Future<bool> checkLoginUnique(String login) async {
     try {
       final request = CheckUniqueRequest(value: login);
-      final response = await _dio.post(
-        '/utils/login-unique',
-        data: request.toJson(),
-      );
+      final response = await _dio.post('/utils/login-unique', data: request.toJson());
       return response.data['is_unique'] as bool;
     } on DioException catch (e) {
       throw _handleError(e);
@@ -86,10 +100,7 @@ class AuthApi implements IAuthApi {
   Future<bool> checkPhoneUnique(String phone) async {
     try {
       final request = CheckUniqueRequest(value: phone);
-      final response = await _dio.post(
-        '/utils/phone-unique',
-        data: request.toJson(),
-      );
+      final response = await _dio.post('/utils/phone-unique', data: request.toJson());
       return response.data['is_unique'] as bool;
     } on DioException catch (e) {
       throw _handleError(e);
