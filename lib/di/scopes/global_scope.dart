@@ -67,7 +67,9 @@ class GlobalScope extends Padi {
       routes: Routes.values,
       guards: [AuthGuard(jwtStorage: jwtStorage)],
       initialState: OctopusState(
-        children: [OctopusNode(name: Routes.home.name, arguments: {}, children: [])],
+        children: [
+          OctopusNode(name: Routes.home.name, arguments: {"activePage": "home"}, children: []),
+        ],
         arguments: {},
         intention: OctopusStateIntention.auto,
       ),
